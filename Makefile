@@ -1,6 +1,6 @@
-PACKAGE := github.com/xboshy/go-template
+MODNAME := $(shell go list -m)
 LICENCE := AGPLv3.0
-REPO := https://$(PACKAGE)
+REPO := https://$(MODNAME)
 
 UNAME := $(shell uname)
 
@@ -21,11 +21,11 @@ BUILDNUMBER		?= $(shell echo 9)
 COMMITHASH		:= $(shell echo 3)
 BRANCH			:= $(shell echo main)
 
-GOLDFLAGS_BASE	:= -X $(PACKAGE)/config.BuildNumber=$(BUILDNUMBER)
-GOLDFLAGS_BASE	+= -X $(PACKAGE)/config.CommitHash=$(COMMITHASH)
-GOLDFLAGS_BASE	+= -X $(PACKAGE)/config.Branch=$(BRANCH)
-GOLDFLAGS_BASE	+= -X $(PACKAGE)/config.License=$(LICENCE)
-GOLDFLAGS_BASE	+= -X $(PACKAGE)/config.Repo=$(REPO)
+GOLDFLAGS_BASE	:= -X $(MODNAME)/config.BuildNumber=$(BUILDNUMBER)
+GOLDFLAGS_BASE	+= -X $(MODNAME)/config.CommitHash=$(COMMITHASH)
+GOLDFLAGS_BASE	+= -X $(MODNAME)/config.Branch=$(BRANCH)
+GOLDFLAGS_BASE	+= -X $(MODNAME)/config.License=$(LICENCE)
+GOLDFLAGS_BASE	+= -X $(MODNAME)/config.Repo=$(REPO)
 GOLDFLAGS_BASE	+= -extldflags \"$(EXTLDFLAGS)\"
 
 GOMOD_DIRS := 
