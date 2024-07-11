@@ -9,22 +9,29 @@ import (
 
 type Version struct {
 	Name        string
+	Major       int
+	Minor       int
 	BuildNumber int
-	CommitHash  string
 	Branch      string
+	CommitHash  string
 	License     string
 	Repo        string
 }
 
 func (v Version) String() string {
-	return fmt.Sprintf("%d-[%s]#%s", v.BuildNumber, v.Branch, v.CommitHash)
+	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.BuildNumber)
 }
 
 func convertToInt(val string) int {
 	if val == "" {
 		return 0
 	}
-	value, _ := strconv.ParseInt(val, 10, 0)
+
+	value, err := strconv.ParseInt(val, 10, 0)
+	if err != nil {
+		return 0
+	}
+
 	return int(value)
 }
 
@@ -37,9 +44,11 @@ var currentVersion = func() Version {
 
 	return Version{
 		Name:        name,
-		BuildNumber: convertToInt(BuildNumber), // set using -ldflags
-		CommitHash:  CommitHash,
+		Major:       convertToInt(VersionMajor),
+		Minor:       convertToInt(VersionMinor),
+		BuildNumber: convertToInt(BuildNumber),
 		Branch:      Branch,
+		CommitHash:  CommitHash,
 		License:     License,
 		Repo:        Repo,
 	}

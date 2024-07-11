@@ -2,6 +2,8 @@ package config
 
 /* Build time variables set through -ldflags */
 
+var VersionMajor string
+var VersionMinor string
 var BuildNumber string
 var CommitHash string
 var Branch string

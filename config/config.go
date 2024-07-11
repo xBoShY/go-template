@@ -31,9 +31,8 @@ func (cfg *Template) ResolveLogPaths(rootDir string) (liveLog, archive string) {
 	return liveLog, archive
 }
 
-func ResolveDataDir(dataDirectory *string, flag string, envPrefix string) (string, error) {
+func ResolveDataDir(dataDirectory *string, flag string, envData string) (string, error) {
 	var dir string
-	var envData = envPrefix + "_DATA"
 	if dataDirectory == nil || *dataDirectory == "" {
 		dir = os.Getenv(envData)
 	} else {
@@ -79,8 +78,8 @@ func LockFile(dir string, instance string) (*flock.Flock, error) {
 
 func FormatVersionAndLicense() string {
 	version := GetCurrentVersion()
-	return fmt.Sprintf("%d\n (commit [%s]#%s)\n%s",
-		version.BuildNumber,
+	return fmt.Sprintf("%s\n(commit %s#%s)\n%s",
+		version.String(),
 		version.Branch,
 		version.CommitHash,
 		GetLicenseInfo(),

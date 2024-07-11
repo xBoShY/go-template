@@ -1,0 +1,129 @@
+# https://zenn.dev/podhmo/scraps/30a4082af7a0d3
+openapi: "3.0.0"
+info:
+  title: Strings API
+  version: 1.0.0
+  summary: An API to handle strings manipulation requests
+  description: |-
+    Common tag is related to service status
+
+tags:
+  - name: common
+    description: Common endpoints
+
+paths:
+  /health:
+    get:
+      operationId: HealthCheck
+      summary: Returns OK if healthy.
+      tags:
+        - common
+      responses:
+        '200':
+          content: {}
+          description: OK.
+        default:
+          content: {}
+          description: Unknown Error
+  /:
+    post:
+      operationId: Request
+      summary: Process a dummy request
+      description: |-
+        A dummy request contains an array of strings
+        and the service will reply with an array of
+        the reversed strings.
+      tags:
+      requestBody:
+        description: |-
+          The byte encoded request.
+          Encoded requests can be concatenated.
+        required: true
+        content:
+          application/vnd.request+v1+json:
+            schema:
+              $ref: '#/components/schemas/Request'
+            examples:
+              '"Hello World"':
+                summary: A single string, "Hello World"
+                value: '[]'
+              '"Hello"+"World"': 
+                summary: Two strings, "Hello" and "World"
+                value: '[]'
+          application/vnd.request+v1+msgpack:
+            schema:
+              $ref: '#/components/schemas/Response'
+            examples:
+              '"Hello World"':
+                summary: A single string, "Hello World"
+                value: '[d]'
+              '"Hello"+"World"': 
+                summary: Two strings, "Hello" and "World"
+                value: '[d]'
+      responses:
+        '200':
+          description: |-
+            The byte encoded response.
+            For multiple responses, then encoded responses are concatenated.
+          required: true
+          content:
+            application/vnd.request+v1+json:
+              schema:
+                $ref: '#/components/schemas/Response'
+              examples:
+                '"dlroW olleH"':
+                  summary: A single reversed string of "Hello World"
+                  value: '[]'
+                '"olleH"+"dlroW"':
+                  summary: Two revered strings of "Hello" and "World"
+                  value: '[]'
+        default:
+          content: {}
+          description: Unknown Error
+components:
+  schemas:
+    'Request':
+      type: object
+      required:
+        - 'message'
+        - 'functions'
+      properties:
+        'uuid':
+          type: string
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/xboshy/go-template/util/uuid
+        'timestamp':
+          type: integer
+          x-go-type: int64
+        'ttl':
+          type: integer
+          x-go-type: int64
+        'message':
+          type: string
+          #x-go-name: Message
+        'functions':
+          type: array
+          items:
+            $ref: '#/components/schemas/Function'
+    'Response':
+      type: object
+      required:
+        - 'reversed-message'
+        - 'uuid'
+      properties:
+        'reversed-message':
+          type: string
+        'uuid':
+          type: string
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/xboshy/go-template/util/uuid
+    'Function':
+      type: string
+      enum:
+        - reverse
+        - upper
+        - lower

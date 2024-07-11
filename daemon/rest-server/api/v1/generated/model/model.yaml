@@ -1,8 +1,0 @@
-package: model
-generate:
-  models: true
-output-options:
-  skip-prune: true
-output: ./v1/generated/model/model.go
-compatibility:
-  always-prefix-enum-values: true

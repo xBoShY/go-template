@@ -61,6 +61,12 @@ type JSON = map[string]interface{}
 
 // Logger is the interface for loggers.
 type Logger interface {
+	// Print logs a message at level Info.
+	Print(...interface{})
+	Println(...interface{})
+	Printf(string, ...interface{})
+	Printj(JSON)
+
 	// Debug logs a message at level Debug.
 	Debug(...interface{})
 	Debugln(...interface{})
@@ -115,6 +121,9 @@ type Logger interface {
 	// Sets the logger to JSON Format
 	SetJSONFormatter()
 
+	// Sets the logger to Text Format
+	SetTextFormatter()
+
 	IsLevelEnabled(level Level) bool
 
 	// source adds file, line and function fields to the event
@@ -122,8 +131,6 @@ type Logger interface {
 
 	// Adds a hook to the logger
 	AddHook(hook logrus.Hook)
-
-	MakeEchoLogger() EchoLogger
 }
 
 type logger struct {
@@ -134,6 +141,22 @@ func (l logger) With(key string, value interface{}) Logger {
 	return logger{
 		l.entry.WithField(key, value),
 	}
+}
+
+func (l logger) Print(args ...interface{}) {
+	l.Info(args...)
+}
+
+func (l logger) Println(args ...interface{}) {
+	l.Infoln(args...)
+}
+
+func (l logger) Printf(format string, args ...interface{}) {
+	l.Infof(format, args...)
+}
+
+func (l logger) Printj(j JSON) {
+	l.Infoj(j)
 }
 
 func (l logger) Debug(args ...interface{}) {
@@ -295,6 +318,10 @@ func (l logger) getOutput() io.Writer {
 
 func (l logger) SetJSONFormatter() {
 	l.entry.Logger.Formatter = &logrus.JSONFormatter{TimestampFormat: "2006-01-02T15:04:05.000000Z07:00"}
+}
+
+func (l logger) SetTextFormatter() {
+	l.entry.Logger.Formatter = &logrus.TextFormatter{TimestampFormat: "2006-01-02T15:04:05.000000Z07:00"}
 }
 
 func (l logger) source() *logrus.Entry {

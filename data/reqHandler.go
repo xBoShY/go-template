@@ -13,10 +13,10 @@ type ReqHandler[REQ any, RESP any] struct {
 	backlogWg    sync.WaitGroup
 	backlogQueue chan BacklogMsg[REQ, RESP]
 	log          logging.Logger
-	resource     Resource[REQ, RESP]
+	processor    Processor[REQ, RESP]
 }
 
-type Resource[REQ any, RESP any] interface {
+type Processor[REQ any, RESP any] interface {
 	Process(REQ) RESP
 }
 
@@ -25,11 +25,12 @@ type BacklogMsg[REQ any, RESP any] interface {
 	Reply(RESP)
 }
 
-func MakeReqHandler[REQ any, RESP any](log logging.Logger, maxBacklogSize int) (*ReqHandler[REQ, RESP], error) {
+func MakeReqHandler[REQ any, RESP any](log logging.Logger, maxBacklogSize int, processor Processor[REQ, RESP]) (*ReqHandler[REQ, RESP], error) {
 	backlogSize := maxBacklogSize
 
 	handler := &ReqHandler[REQ, RESP]{
 		backlogQueue: make(chan BacklogMsg[REQ, RESP], backlogSize),
+		processor:    processor,
 		log:          log,
 	}
 
@@ -57,7 +58,7 @@ func (handler *ReqHandler[REQ, RESP]) handler() {
 		select {
 		case msg := <-handler.backlogQueue:
 			req := msg.Request()
-			resp := handler.resource.Process(req)
+			resp := handler.processor.Process(req)
 			msg.Reply(resp)
 		case <-handler.ctx.Done():
 			return

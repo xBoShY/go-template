@@ -9,7 +9,6 @@ type Template struct {
 	LogArchiveMaxAge     string
 	LogSizeLimit         uint64
 
-	NetAddress      string
 	EndpointAddress string
 
 	RestReadTimeoutSeconds  int

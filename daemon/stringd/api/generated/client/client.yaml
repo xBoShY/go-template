@@ -1,0 +1,9 @@
+package: client
+generate:
+  client: true
+output-options:
+  skip-prune: true
+output: ./generated/client/client.go
+additional-imports:
+  - alias: "."
+    package: "github.com/xboshy/go-template/daemon/stringd/api/generated/model"
