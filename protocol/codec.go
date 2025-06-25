@@ -24,12 +24,12 @@ var CodecHandle *codec.MsgpackHandle
 var JSONHandle *codec.JsonHandle
 
 // JSONStrictHandle is the same as JSONHandle but with MapKeyAsString=true
-// for correct maps[int]interface{} encoding
+// for correct maps[int]any encoding
 var JSONStrictHandle *codec.JsonHandle
 
 // Decoder is our interface for a thing that can decode objects.
 type Decoder interface {
-	Decode(objptr interface{}) error
+	Decode(objptr any) error
 }
 
 func init() {
@@ -70,7 +70,7 @@ type codecBytes struct {
 }
 
 var codecBytesPool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return &codecBytes{
 			enc: codec.NewEncoderBytes(nil, CodecHandle),
 		}
@@ -78,7 +78,7 @@ var codecBytesPool = sync.Pool{
 }
 
 var codecStreamPool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return codec.NewEncoder(nil, CodecHandle)
 	},
 }
@@ -87,7 +87,7 @@ const initEncodeBufSize = 256
 
 // EncodeReflect returns a msgpack-encoded byte buffer for a given object,
 // using reflection.
-func EncodeReflect(obj interface{}) []byte {
+func EncodeReflect(obj any) []byte {
 	codecBytes := codecBytesPool.Get().(*codecBytes)
 	codecBytes.buf = make([]byte, initEncodeBufSize)
 	codecBytes.enc.ResetBytes(&codecBytes.buf)
@@ -121,7 +121,7 @@ func Encode(obj msgp.Marshaler) ([]byte, error) {
 }
 
 // EncodeStream is like Encode but writes to an io.Writer instead.
-func EncodeStream(w io.Writer, obj interface{}) {
+func EncodeStream(w io.Writer, obj any) {
 	enc := codecStreamPool.Get().(*codec.Encoder)
 	enc.Reset(w)
 	enc.MustEncode(obj)
@@ -132,7 +132,7 @@ func EncodeStream(w io.Writer, obj interface{}) {
 }
 
 // EncodeJSON returns a JSON-encoded byte buffer for a given object
-func EncodeJSON(obj interface{}) []byte {
+func EncodeJSON(obj any) []byte {
 	var b []byte
 	enc := codec.NewEncoderBytes(&b, JSONHandle)
 	enc.MustEncode(obj)
@@ -141,7 +141,7 @@ func EncodeJSON(obj interface{}) []byte {
 
 // EncodeJSONStrict returns a JSON-encoded byte buffer for a given object
 // It is the same EncodeJSON but encodes map's int keys as strings
-func EncodeJSONStrict(obj interface{}) []byte {
+func EncodeJSONStrict(obj any) []byte {
 	var b []byte
 	enc := codec.NewEncoderBytes(&b, JSONStrictHandle)
 	enc.MustEncode(obj)
@@ -150,7 +150,7 @@ func EncodeJSONStrict(obj interface{}) []byte {
 
 // DecodeReflect attempts to decode a msgpack-encoded byte buffer
 // into an object instance pointed to by objptr, using reflection.
-func DecodeReflect(b []byte, objptr interface{}) error {
+func DecodeReflect(b []byte, objptr any) error {
 	dec := codec.NewDecoderBytes(b, CodecHandle)
 	return dec.Decode(objptr)
 }
@@ -197,14 +197,14 @@ func Decode(b []byte, objptr msgp.Unmarshaler) error {
 }
 
 // DecodeStream is like Decode but reads from an io.Reader instead.
-func DecodeStream(r io.Reader, objptr interface{}) error {
+func DecodeStream(r io.Reader, objptr any) error {
 	dec := codec.NewDecoder(r, CodecHandle)
 	return dec.Decode(objptr)
 }
 
 // DecodeJSON attempts to decode a JSON-encoded byte buffer into an
 // object instance pointed to by objptr
-func DecodeJSON(b []byte, objptr interface{}) error {
+func DecodeJSON(b []byte, objptr any) error {
 	dec := codec.NewDecoderBytes(b, JSONHandle)
 	return dec.Decode(objptr)
 }
@@ -272,7 +272,7 @@ func (d *MsgpDecoderBytes) Remaining() int {
 
 // encodingPool holds temporary byte slice buffers used for encoding messages.
 var encodingPool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return &EncodingBuf{b: make([]byte, 0)}
 	},
 }

@@ -24,4 +24,7 @@ go.work
 build/
 
 # Local notes
-.localnotes/
+.local/
+
+# Snyk
+.dccache

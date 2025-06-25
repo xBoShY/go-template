@@ -1,0 +1,621 @@
+# https://github.com/pingcap/tidb/blob/master/.golangci.yml
+# Review: [Revive, GoCritic]
+
+version: "2"
+run:
+  timeout: 10m
+  tests: true
+  concurrency: 16
+
+severity:
+  default: warning
+
+output:
+  show-stats: true
+  formats:
+    text:
+      colors: true
+      print-issued-lines: false
+  sort-order:
+    - linter
+    - severity
+    - file
+
+issues:
+  uniq-by-line: false
+  max-same-issues: 0
+
+linters:
+  default: none
+#  disable-all: true
+#  fast: false
+  enable:
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - containedctx
+    - contextcheck
+    - copyloopvar
+    - decorder
+    - depguard
+    - dupl
+    - durationcheck
+    - errcheck
+    - errname
+    - errorlint
+    - funlen
+    - gocheckcompilerdirectives
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - godot
+    - godox
+    - gomoddirectives
+    - goprintffuncname
+    - gosec
+    - govet
+    - ineffassign
+    - intrange
+    - ireturn
+    - lll
+    - maintidx
+    - makezero
+    - misspell
+    - mnd
+    - musttag
+    - nakedret
+    - nestif
+    - nilerr
+    - nilnil
+    - nlreturn
+    
+    - noctx
+    - nolintlint
+    - revive
+    - staticcheck
+    - testifylint
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+    - paralleltest
+  settings:
+    copyloopvar:
+      check-alias: true
+    decorder:
+      dec-order:
+        - type
+        - const
+        - var
+        - func
+      disable-dec-order-check: false
+      disable-init-func-first-check: false
+      disable-dec-num-check: true
+      disable-type-dec-num-check: false
+      disable-const-dec-num-check: false
+      disable-var-dec-num-check: false
+    depguard:
+      rules:
+        prevent_unmaintained_packages:
+          list-mode: lax
+          files:
+            - $all
+            - "!$test"
+          allow:
+            - $gostd
+          deny:
+            - pkg: io/ioutil
+              desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+    dupl:
+      threshold: 100
+    errcheck:
+      check-type-assertions: true
+      check-blank: false
+      disable-default-exclusions: true
+      exclude-functions: []
+    errorlint:
+      errorf: true
+      errorf-multi: false
+      asserts: false
+      comparison: true
+      allowed-errors: []
+      allowed-errors-wildcard: []
+    funlen:
+      lines: 80
+      statements: 60
+      ignore-comments: true
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+      match-constant: true
+      numbers: false
+      ignore-calls: false
+    godot:
+      scope: all
+      exclude: []
+      period: true
+      capital: true
+    godox:
+      keywords:
+        - FIXME
+        - BUG
+        - TODO
+        - NOTE
+        - OPTIMIZE
+        - HACK
+
+
+    gomoddirectives:
+      replace-local: false
+      replace-allow-list: []
+      retract-allow-no-explanation: false
+      exclude-forbidden: false
+    gosec:
+      includes: [] # all rules
+      excludes: []
+      severity: low
+      confidence: low
+      concurrency: 16
+    ireturn:
+      allow:
+        - anon
+        - error
+        - empty
+        - stdlib
+      reject: []
+    lll:
+      line-length: 120
+      tab-width: 4
+    maintidx:
+      under: 20
+    makezero:
+      always: true
+    musttag:
+      functions: []
+    nakedret:
+      max-func-lines: 30
+    nestif:
+      min-complexity: 5
+    nilnil:
+      checked-types:
+        - ptr
+        - func
+        - iface
+        - map
+        - chan
+        - uintptr
+        - unsafeptr
+    nlreturn:
+      block-size: 1
+
+    nolintlint:
+      allow-unused: false # report any unused nolint directives
+      require-specific: true # require nolint directives to be specific about which linter is being skipped
+      require-explanation: true # require an explanation for nolint directives
+    misspell:
+      locale: US
+    mnd:
+      checks:
+        - argument
+        - case
+        - condition
+        - return
+      ignored-numbers:
+        - "0"
+        - "1"
+      ignored-functions:
+        - make
+        - runtime.Caller
+    #gocritic:
+    #  enable-all: true
+    #  disabled-checks:
+    #    - commentFormatting
+    govet:
+      disable-all: false
+      enable-all: true
+    gocritic:
+      disable-all: true
+      enable-all: false
+      enabled-checks:
+        - appendAssign
+        - appendCombine
+        - argOrder
+        - assignOp
+        - badCall
+        - badCond
+        - badLock
+        - badRegexp
+        - badSorting
+        # badSyncOnceFunc
+        - boolExprSimplify
+        # builtinShadow
+        # builtinShadowDecl
+        # captLocal
+        - caseOrder
+        - codegenComment
+        # commentFormatting
+        # commentedOutCode
+        # commentedOutImport
+        - defaultCaseOrder
+        # deferInLoop
+        - deferUnlambda
+        - deprecatedComment
+        - docStub
+        - dupArg
+        # dupBranchBody
+        - dupCase
+        # dupImport
+        - dupSubExpr
+        - dynamicFmtString
+        - elseif
+        - emptyDecl
+        - emptyFallthrough
+        - emptyStringTest
+        - equalFold
+        - evalOrder
+        - exitAfterDefer
+        - exposedSyncMutex
+        - externalErrorReassign
+        - filepathJoin
+        - flagDeref
+        - flagName
+        - hexLiteral
+        - httpNoBody
+        # hugeParam
+        - ifElseChain
+        # importShadow
+        - indexAlloc
+        - initClause
+        - mapKey
+        - methodExprCall
+        - nestingReduce
+        - newDeref
+        - nilValReturn
+        - offBy1
+        # paramTypeCombine
+        - preferDecodeRune
+        - preferFilepathJoin
+        - preferFprint
+        - preferStringWriter
+        - preferWriteByte
+        - ptrToRefParam
+        - rangeExprCopy
+        - rangeValCopy
+        - redundantSprint
+        - regexpMust
+        - regexpPattern
+        - regexpSimplify
+        - returnAfterHttpError
+        - singleCaseSwitch
+        - sliceClear
+        - sloppyLen
+        - sloppyReassign
+        - sloppyTypeAssert
+        - sortSlice
+        - sprintfQuotedString
+        - sqlQuery
+        - stringConcatSimplify
+        - stringXbytes
+        - stringsCompare
+        - switchTrue
+        - syncMapLoadAndDelete
+        - timeExprSimplify
+        # todoCommentWithoutDetail
+        # tooManyResultsChecker
+        - truncateCmp
+        - typeAssertChain
+        # typeDefFirst
+        - typeSwitchVar
+        - typeUnparen
+        - uncheckedInlineErr
+        - underef
+        - unlabelStmt
+        - unlambda
+        # unnamedResult
+        - unnecessaryBlock
+        - unnecessaryDefer
+        - unslice
+        - valSwap
+        - weakCond
+        # whyNoLint
+        - wrapperFunc
+        - yodaStyleExpr
+      settings:
+        elseif:
+          skipBalanced: true
+        ifElseChain:
+          minThreshold: 2
+        nestingReduce:
+          bodyWidth: 5
+        rangeExprCopy:
+          sizeThreshold: 512
+          skipTestFuncs: true
+        rangeValCopy:
+          sizeThreshold: 128
+          skipTestFuncs: true
+        truncateCmp:
+          skipArchDependent: true
+        underef:
+          skipRecvDeref: true
+    revive:
+      max-open-files: 2048
+      severity: error
+      enable-all-rules: false
+      confidence: 0.1
+      # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md
+      rules:
+        - name: add-constant
+          disabled: true
+        - name: argument-limit
+          severity: warning
+          disabled: false
+          arguments: [4]
+        - name: atomic
+          severity: warning
+          disabled: false
+        - name: banned-characters
+          severity: warning
+          disabled: false
+          arguments: ["Ω", "Σ", "σ"]
+        - name: bare-return
+          severity: warning
+          disabled: false
+        - name: blank-imports
+          severity: warning
+          disabled: false
+        - name: bool-literal-in-expr
+          severity: warning
+          disabled: false
+        - name: call-to-gc
+          severity: warning
+          disabled: false
+        - name: cognitive-complexity
+          severity: warning
+          disabled: false
+          arguments: [20]
+        - name: comment-spacings
+          severity: warning
+          disabled: false
+        - name: comments-density
+          disabled: true
+        - name: confusing-naming
+          severity: warning
+          disabled: false
+        - name: confusing-results
+          severity: warning
+          disabled: false
+        - name: constant-logical-expr
+          severity: warning
+          disabled: false
+        - name: context-as-argument
+          severity: warning
+          disabled: false
+        - name: context-keys-type
+          severity: warning
+          disabled: false
+        - name: cyclomatic
+          severity: warning
+          disabled: false
+          arguments: [20]
+        - name: datarace
+          severity: warning
+          disabled: false
+        - name: deep-exit
+          severity: warning
+          disabled: false
+        - name: defer
+          severity: warning
+          disabled: false
+        - name: dot-imports
+          severity: warning
+          disabled: false
+        - name: duplicated-imports
+          severity: warning
+          disabled: false
+        - name: early-return
+          severity: warning
+          disabled: false
+          arguments:
+            - preserveScope
+        - name: empty-block
+          severity: warning
+          disabled: false
+        - name: empty-lines
+          severity: warning
+          disabled: false
+        - name: enforce-map-style
+          severity: warning
+          disabled: false
+          arguments:
+            - literal
+        - name: enforce-repeated-arg-type-style
+          severity: warning
+          disabled: false
+          arguments:
+            - funcArgStyle: full
+              funcRetValStyle: short
+        - name: error-naming
+          disabled: true
+        - name: error-return
+          severity: warning
+          disabled: false
+        - name: error-strings
+          severity: warning
+          disabled: false
+        - name: errorf
+          severity: warning
+          disabled: false
+        - name: exported
+          severity: warning
+          disabled: false
+          arguments:
+            - checkPrivateReceivers
+        - name: file-header
+          disabled: true
+        - name: flag-parameter
+          severity: warning
+          disabled: false
+        - name: function-length
+          disabled: true
+        - name: function-result-limit
+          severity: warning
+          disabled: false
+          arguments: [3]
+        - name: get-return
+          severity: warning
+          disabled: false
+        - name: identical-branches
+          severity: warning
+          disabled: false
+        - name: if-return
+          severity: warning
+          disabled: false
+        - name: import-alias-naming
+          severity: warning
+          disabled: false
+          arguments:
+            - allowRegex: "^[a-z][a-z0-9]{0,}$"
+              denyRegex: '^v\d+$'
+        - name: import-shadowing
+          severity: warning
+          disabled: false
+        - name: imports-blocklist
+          severity: warning
+          disabled: false
+          arguments: []
+        - name: increment-decrement
+          severity: warning
+          disabled: false
+        - name: indent-error-flow
+          severity: warning
+          disabled: false
+          arguments:
+            - preserveScope
+        - name: line-length-limit
+          disabled: true
+        - name: max-control-nesting
+          severity: warning
+          disabled: false
+          arguments: [5]
+        - name: max-public-structs
+          severity: warning
+          disabled: false
+          arguments: [3]
+        - name: modifies-parameter
+          severity: warning
+          disabled: false
+        - name: modifies-value-receiver
+          severity: warning
+          disabled: false
+        - name: nested-structs
+          severity: warning
+          disabled: false
+        - name: optimize-operands-order
+          disabled: true
+        - name: package-comments
+          severity: warning
+          disabled: false
+        - name: range-val-address
+          severity: warning
+          disabled: false
+        - name: range-val-in-closure
+          severity: warning
+          disabled: false
+        - name: range
+          severity: warning
+          disabled: false
+        - name: receiver-naming
+          severity: warning
+          disabled: false
+        - name: redefines-builtin-id
+          severity: warning
+          disabled: false
+        - name: redundant-import-alias
+          severity: warning
+          disabled: false
+        - name: string-format
+          severity: warning
+          disabled: false
+          arguments: []
+        - name: string-of-int
+          severity: warning
+          disabled: false
+        - name: struct-tag
+          severity: warning
+          disabled: false
+          arguments: []
+        - name: superfluous-else
+          severity: warning
+          disabled: false
+          arguments:
+            - preserveScope
+        - name: time-equal
+          severity: warning
+          disabled: false
+        - name: time-naming
+          severity: warning
+          disabled: false
+        - name: unchecked-type-assertion
+          disabled: true
+        - name: unconditional-recursion
+          severity: warning
+          disabled: false
+        - name: unexported-naming
+          severity: warning
+          disabled: false
+        - name: unexported-return
+          severity: warning
+          disabled: false
+        - name: unhandled-error
+          disabled: true
+        - name: unnecessary-stmt
+          severity: warning
+          disabled: false
+        - name: unreachable-code
+          severity: warning
+          disabled: false
+        - name: unused-parameter
+          severity: warning
+          disabled: false
+          arguments: []
+        - name: unused-receiver
+          severity: warning
+          disabled: false
+          arguments: []
+        - name: use-any
+          severity: warning
+          disabled: false
+        - name: useless-break
+          severity: warning
+          disabled: false
+        - name: var-declaration
+          severity: warning
+          disabled: false
+        - name: var-naming
+          disabled: true
+        - name: waitgroup-by-value
+          severity: warning
+          disabled: true
+  exclusions:
+    rules: []
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+      rewrite-rules:
+        - pattern: interface{}
+          replacement: any
+    goimports:
+      local-prefixes: 
+        - github.com/xboshy/go-template
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

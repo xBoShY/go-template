@@ -57,54 +57,54 @@ func init() {
 // Fields maps logrus fields
 type Fields = logrus.Fields
 
-type JSON = map[string]interface{}
+type JSON = map[string]any
 
 // Logger is the interface for loggers.
 type Logger interface {
 	// Print logs a message at level Info.
-	Print(...interface{})
-	Println(...interface{})
-	Printf(string, ...interface{})
+	Print(...any)
+	Println(...any)
+	Printf(string, ...any)
 	Printj(JSON)
 
 	// Debug logs a message at level Debug.
-	Debug(...interface{})
-	Debugln(...interface{})
-	Debugf(string, ...interface{})
+	Debug(...any)
+	Debugln(...any)
+	Debugf(string, ...any)
 	Debugj(JSON)
 
 	// Info logs a message at level Info.
-	Info(...interface{})
-	Infoln(...interface{})
-	Infof(string, ...interface{})
+	Info(...any)
+	Infoln(...any)
+	Infof(string, ...any)
 	Infoj(JSON)
 
 	// Warn logs a message at level Warn.
-	Warn(...interface{})
-	Warnln(...interface{})
-	Warnf(string, ...interface{})
+	Warn(...any)
+	Warnln(...any)
+	Warnf(string, ...any)
 	Warnj(JSON)
 
 	// Error logs a message at level Error.
-	Error(...interface{})
-	Errorln(...interface{})
-	Errorf(string, ...interface{})
+	Error(...any)
+	Errorln(...any)
+	Errorf(string, ...any)
 	Errorj(JSON)
 
 	// Fatal logs a message at level Fatal.
-	Fatal(...interface{})
-	Fatalln(...interface{})
-	Fatalf(string, ...interface{})
+	Fatal(...any)
+	Fatalln(...any)
+	Fatalf(string, ...any)
 	Fatalj(JSON)
 
 	// Panic logs a message at level Panic.
-	Panic(...interface{})
-	Panicln(...interface{})
-	Panicf(string, ...interface{})
+	Panic(...any)
+	Panicln(...any)
+	Panicf(string, ...any)
 	Panicj(JSON)
 
 	// Add one key-value to log
-	With(key string, value interface{}) Logger
+	With(key string, value any) Logger
 
 	// WithFields logs a message with specific fields
 	WithFields(Fields) Logger
@@ -137,21 +137,21 @@ type logger struct {
 	entry *logrus.Entry
 }
 
-func (l logger) With(key string, value interface{}) Logger {
+func (l logger) With(key string, value any) Logger {
 	return logger{
 		l.entry.WithField(key, value),
 	}
 }
 
-func (l logger) Print(args ...interface{}) {
+func (l logger) Print(args ...any) {
 	l.Info(args...)
 }
 
-func (l logger) Println(args ...interface{}) {
+func (l logger) Println(args ...any) {
 	l.Infoln(args...)
 }
 
-func (l logger) Printf(format string, args ...interface{}) {
+func (l logger) Printf(format string, args ...any) {
 	l.Infof(format, args...)
 }
 
@@ -159,15 +159,15 @@ func (l logger) Printj(j JSON) {
 	l.Infoj(j)
 }
 
-func (l logger) Debug(args ...interface{}) {
+func (l logger) Debug(args ...any) {
 	l.source().Debug(args...)
 }
 
-func (l logger) Debugln(args ...interface{}) {
+func (l logger) Debugln(args ...any) {
 	l.source().Debugln(args...)
 }
 
-func (l logger) Debugf(format string, args ...interface{}) {
+func (l logger) Debugf(format string, args ...any) {
 	l.source().Debugf(format, args...)
 }
 
@@ -175,15 +175,15 @@ func (l logger) Debugj(j JSON) {
 	l.source().WithFields(j).Debug()
 }
 
-func (l logger) Info(args ...interface{}) {
+func (l logger) Info(args ...any) {
 	l.source().Info(args...)
 }
 
-func (l logger) Infoln(args ...interface{}) {
+func (l logger) Infoln(args ...any) {
 	l.source().Infoln(args...)
 }
 
-func (l logger) Infof(format string, args ...interface{}) {
+func (l logger) Infof(format string, args ...any) {
 	l.source().Infof(format, args...)
 }
 
@@ -191,15 +191,15 @@ func (l logger) Infoj(j JSON) {
 	l.source().WithFields(j).Info()
 }
 
-func (l logger) Warn(args ...interface{}) {
+func (l logger) Warn(args ...any) {
 	l.source().Warn(args...)
 }
 
-func (l logger) Warnln(args ...interface{}) {
+func (l logger) Warnln(args ...any) {
 	l.source().Warnln(args...)
 }
 
-func (l logger) Warnf(format string, args ...interface{}) {
+func (l logger) Warnf(format string, args ...any) {
 	l.source().Warnf(format, args...)
 }
 
@@ -207,17 +207,17 @@ func (l logger) Warnj(j JSON) {
 	l.source().WithFields(j).Warn()
 }
 
-func (l logger) Error(args ...interface{}) {
+func (l logger) Error(args ...any) {
 	l.source().Errorln(stackPrefix, string(debug.Stack()))
 	l.source().Error(args...)
 }
 
-func (l logger) Errorln(args ...interface{}) {
+func (l logger) Errorln(args ...any) {
 	l.source().Errorln(stackPrefix, string(debug.Stack()))
 	l.source().Errorln(args...)
 }
 
-func (l logger) Errorf(format string, args ...interface{}) {
+func (l logger) Errorf(format string, args ...any) {
 	l.source().Errorln(stackPrefix, string(debug.Stack()))
 	l.source().Errorf(format, args...)
 }
@@ -226,17 +226,17 @@ func (l logger) Errorj(j JSON) {
 	l.source().WithFields(j).Error()
 }
 
-func (l logger) Fatal(args ...interface{}) {
+func (l logger) Fatal(args ...any) {
 	l.source().Errorln(stackPrefix, string(debug.Stack()))
 	l.source().Fatal(args...)
 }
 
-func (l logger) Fatalln(args ...interface{}) {
+func (l logger) Fatalln(args ...any) {
 	l.source().Errorln(stackPrefix, string(debug.Stack()))
 	l.source().Fatalln(args...)
 }
 
-func (l logger) Fatalf(format string, args ...interface{}) {
+func (l logger) Fatalf(format string, args ...any) {
 	l.source().Errorln(stackPrefix, string(debug.Stack()))
 	l.source().Fatalf(format, args...)
 }
@@ -246,7 +246,7 @@ func (l logger) Fatalj(j JSON) {
 	l.source().WithFields(j).Fatal()
 }
 
-func (l logger) Panic(args ...interface{}) {
+func (l logger) Panic(args ...any) {
 	defer func() {
 		if r := recover(); r != nil {
 			panic(r)
@@ -256,7 +256,7 @@ func (l logger) Panic(args ...interface{}) {
 	l.source().Panic(args...)
 }
 
-func (l logger) Panicln(args ...interface{}) {
+func (l logger) Panicln(args ...any) {
 	defer func() {
 		if r := recover(); r != nil {
 			panic(r)
@@ -266,7 +266,7 @@ func (l logger) Panicln(args ...interface{}) {
 	l.source().Panicln(args...)
 }
 
-func (l logger) Panicf(format string, args ...interface{}) {
+func (l logger) Panicf(format string, args ...any) {
 	defer func() {
 		if r := recover(); r != nil {
 			panic(r)
